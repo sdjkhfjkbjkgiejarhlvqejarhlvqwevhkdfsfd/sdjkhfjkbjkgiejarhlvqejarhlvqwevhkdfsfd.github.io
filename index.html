@@ -31,6 +31,13 @@
             border: 2px solid #ff0000;
             background: #0a0a0a;
         }
+        .group-name {
+            color: #ff0000;
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
         .warning {
             font-size: 80px;
             margin-bottom: 20px;
@@ -103,15 +110,26 @@
         .contact strong {
             color: #ff0000;
         }
+        .leaked-message {
+            display: none;
+            color: #ff0000;
+            font-size: 24px;
+            margin-top: 30px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="warning">⚠️</div>
+        <div class="group-name">White Crow</div>
         <h1>System Compromised</h1>
         <p class="subtitle">Your device has been hacked. All data has been extracted.</p>
         
-        <div class="info-box">
+        <div class="info-box" id="infoBox">
             <h2>// EXTRACTED DATA</h2>
             <div class="info-item">
                 <span class="label">IP Address:</span>
@@ -139,19 +157,25 @@
             </div>
         </div>
         
-        <div class="timer-label">DATA WILL BE SENT IN</div>
-        <div class="countdown" id="countdown">00:00:00</div>
+        <div id="timerSection">
+            <div class="timer-label">DATA WILL BE SENT IN</div>
+            <div class="countdown" id="countdown">00:00:00</div>
+        </div>
         
-        <p class="warning-text">
+        <p class="warning-text" id="warningText">
             Your files have been encrypted. All personal data, photos, 
             messages, and browser history have been copied. Unless you 
             act now, everything will be leaked.
         </p>
         
-        <div class="contact">
-            <strong>CONTACT: NONE LMAO 😂</strong><br>
+        <div class="contact" id="contactSection">
+            <strong>CONTACT: NONE LMAO</strong><br>
             <br>
             Send 0.5 BTC to recover your data. You have 24 hours.
+        </div>
+        
+        <div class="leaked-message" id="leakedMessage">
+            Sorry bro your info already had been leaked
         </div>
     </div>
     
@@ -167,7 +191,21 @@
         document.getElementById('timezone').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
         document.getElementById('language').innerText = navigator.language;
         
-        let time = 86400;
+        const COOKIE_NAME = 'white_crow_timer';
+        const TOTAL_TIME = 86400;
+        
+        function getCookie(name) {
+            const value = "; " + document.cookie;
+            const parts = value.split("; " + name + "=");
+            if (parts.length === 2) return parts.pop().split(";").shift();
+            return null;
+        }
+        
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            document.cookie = name + "=" + value + ";expires=" + date.toUTCString() + ";path=/";
+        }
         
         function formatTime(seconds) {
             const h = Math.floor(seconds / 3600);
@@ -178,13 +216,40 @@
                    String(s).padStart(2, '0');
         }
         
-        document.getElementById('countdown').innerText = formatTime(time);
+        function showLeakedState() {
+            document.getElementById('timerSection').style.display = 'none';
+            document.getElementById('warningText').style.display = 'none';
+            document.getElementById('contactSection').style.display = 'none';
+            document.getElementById('leakedMessage').style.display = 'block';
+            document.getElementById('infoBox').style.borderColor = '#ff0000';
+        }
         
-        setInterval(() => {
-            time--;
+        let savedTime = getCookie(COOKIE_NAME);
+        let time;
+        
+        if (savedTime !== null) {
+            time = parseInt(savedTime);
+            if (time <= 0) {
+                showLeakedState();
+            }
+        } else {
+            time = TOTAL_TIME;
+        }
+        
+        if (time > 0) {
             document.getElementById('countdown').innerText = formatTime(time);
-            if (time <= 0) time = 3600;
-        }, 1000);
+            
+            const interval = setInterval(() => {
+                time--;
+                document.getElementById('countdown').innerText = formatTime(time);
+                setCookie(COOKIE_NAME, time, 1);
+                
+                if (time <= 0) {
+                    clearInterval(interval);
+                    showLeakedState();
+                }
+            }, 1000);
+        }
     </script>
 </body>
 </html>
