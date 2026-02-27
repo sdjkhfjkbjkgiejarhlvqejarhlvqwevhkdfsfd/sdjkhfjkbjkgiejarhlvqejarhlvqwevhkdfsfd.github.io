@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="logo.png">
+    <title>SYSTEM COMPROMISED</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        body {
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            max-width: 700px;
+            border: 2px solid #ff0000;
+            background: #0a0a0a;
+        }
+        .warning {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #ff0000;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #ff0000;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .subtitle {
+            color: #ff4444;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .info-box {
+            background: #111;
+            border: 1px solid #ff0000;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .info-box h2 {
+            color: #ff0000;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .info-item {
+            margin: 15px 0;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #222;
+            padding-bottom: 8px;
+        }
+        .info-item .label {
+            color: #888;
+        }
+        .info-item .value {
+            color: #ff3333;
+        }
+        .countdown {
+            font-size: 48px;
+            color: #ff0000;
+            margin: 30px 0;
+            text-shadow: 0 0 20px #ff0000;
+        }
+        .timer-label {
+            color: #ff4444;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .warning-text {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 20px;
+            line-height: 1.8;
+        }
+        .contact {
+            margin-top: 30px;
+            padding: 15px;
+            background: #1a0000;
+            border: 1px solid #ff0000;
+            font-size: 12px;
+        }
+        .contact strong {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="warning">⚠️</div>
+        <h1>System Compromised</h1>
+        <p class="subtitle">Your device has been hacked. All data has been extracted.</p>
+        
+        <div class="info-box">
+            <h2>// EXTRACTED DATA</h2>
+            <div class="info-item">
+                <span class="label">IP Address:</span>
+                <span class="value" id="ip">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Operating System:</span>
+                <span class="value" id="os">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Browser:</span>
+                <span class="value" id="browser">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Screen Resolution:</span>
+                <span class="value" id="resolution">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Time Zone:</span>
+                <span class="value" id="timezone">Loading...</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Language:</span>
+                <span class="value" id="language">Loading...</span>
+            </div>
+        </div>
+        
+        <div class="timer-label">DATA WILL BE SENT IN</div>
+        <div class="countdown" id="countdown">00:00:00</div>
+        
+        <p class="warning-text">
+            Your files have been encrypted. All personal data, photos, 
+            messages, and browser history have been copied. Unless you 
+            act now, everything will be leaked.
+        </p>
+        
+        <div class="contact">
+            <strong>CONTACT: NONE LMAO 😂</strong><br>
+            <br>
+            Send 0.5 BTC to recover your data. You have 24 hours.
+        </div>
+    </div>
+    
+    <script>
+        fetch("https://api.ipify.org?format=json")
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("ip").innerText = data.ip;
+        });
+        document.getElementById('os').innerText = navigator.platform;
+        document.getElementById('browser').innerText = navigator.userAgent.split(' ').pop();
+        document.getElementById('resolution').innerText = screen.width + 'x' + screen.height;
+        document.getElementById('timezone').innerText = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.getElementById('language').innerText = navigator.language;
+        
+        let time = 86400;
+        
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            return String(h).padStart(2, '0') + ':' + 
+                   String(m).padStart(2, '0') + ':' + 
+                   String(s).padStart(2, '0');
+        }
+        
+        document.getElementById('countdown').innerText = formatTime(time);
+        
+        setInterval(() => {
+            time--;
+            document.getElementById('countdown').innerText = formatTime(time);
+            if (time <= 0) time = 3600;
+        }, 1000);
+    </script>
+</body>
+</html>
